@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "83879850625",
+    "firebase_url": "https://communitygroupchat.firebaseio.com",
+    "project_id": "communitygroupchat",
+    "storage_bucket": "communitygroupchat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:83879850625:android:c2147d0d33222cfcab1380",
+        "android_client_info": {
+          "package_name": "com.example.CommunityHelp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "83879850625-o7gcvdaldco18c0g21tpl8nrc6bin7n7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzgVaRP0t0QWEZK7aDrOK6dDPJ5xBmHzQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "83879850625-o7gcvdaldco18c0g21tpl8nrc6bin7n7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
