@@ -73,6 +73,10 @@ class ConfirmGroupState extends State<ConfirmGroup> {
     for (UserModel user in group.users) {
       addUsers(groupId, user.number, user.name);
     }
+    var user = context.read<UserModel>();
+    // Adds the logged in user
+    addUsers(groupId, user.number, user.name);
+    addGroup(user.number, groupId, groupName);
 
     for (UserModel user in group.users) {
       addGroup(user.number, groupId, groupName);
@@ -80,7 +84,7 @@ class ConfirmGroupState extends State<ConfirmGroup> {
 
     group.clear();
     // goes back two screens
-    //TODO - might need to change to use name
+    //TODO - might need to change to use Navigate.withname
     int count = 0;
     Navigator.of(context).popUntil((_) => count++ >= 2);
     /*Navigator.popUntil(
@@ -107,6 +111,12 @@ class ConfirmGroupState extends State<ConfirmGroup> {
 
   // adds the users to the group/groupid/users collection
   addUsers(String groupId, String number, String name) {
+    var admin = false;
+    var user = context.read<UserModel>();
+    if (user.number == number) {
+      admin = true;
+    }
+
     try {
       var documentReference = FirebaseFirestore.instance
           .collection('groups')
@@ -115,7 +125,7 @@ class ConfirmGroupState extends State<ConfirmGroup> {
           .doc(number);
 
       FirebaseFirestore.instance.runTransaction((transaction) async {
-        transaction.set(documentReference, {'name': name});
+        transaction.set(documentReference, {'name': name, 'admin': admin});
       });
     } catch (err) {
       print(err);

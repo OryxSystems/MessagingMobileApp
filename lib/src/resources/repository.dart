@@ -1,5 +1,6 @@
-import 'package:CommunityHelp/src/models/message_model.dart';
-import 'package:CommunityHelp/src/screens/add_group.dart';
+import '../models/message_model.dart';
+import '../models/user_model_group.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Repository {
@@ -17,8 +18,23 @@ class Repository {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((document) => Message(
-              document['user'], document['content'], document['timestamp']))
+          .map((document) => Message(document['user'], document['content'],
+              document['timestamp'], document['image'], document['incident']))
+          .toList();
+    });
+  }
+
+// used to fetch the users belonging to 'groupId'
+  Stream<List<UserModelGroup>> getUsersInGroup(String groupId) {
+    return _firestore
+        .collection('groups')
+        .doc(groupId)
+        .collection('users')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map(
+              (document) => UserModelGroup(document['name'], document['admin']))
           .toList();
     });
   }

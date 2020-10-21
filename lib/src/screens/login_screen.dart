@@ -35,7 +35,7 @@ class LoginScreenState extends State<LoginScreen> {
       title: Text(document['name']),
       onTap: () {
         Navigator.pushNamed(
-            context, '/h{${document['name']}: ${document['number']}}');
+            context, '/home{${document['name']}: ${document['number']}}');
       },
     );
   }

@@ -11,11 +11,13 @@ class AddGroup extends StatefulWidget {
 }
 
 class AddGroupState extends State<AddGroup> {
+  final TextEditingController textEditingController = TextEditingController();
+
   Widget build(context) {
     return WillPopScope(
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.send),
+          child: Icon(Icons.arrow_forward),
           onPressed: () {
             Navigator.pushNamed(context, '/confirm_group');
           },
@@ -49,6 +51,38 @@ class AddGroupState extends State<AddGroup> {
         group.clear();
         Navigator.of(context).pop(true);
       },
+    );
+  }
+
+  Widget buildInput() {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: Colors.grey, width: 0.5))),
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 10.0),
+              child: TextField(
+                onSubmitted: (value) {
+                  //onAddGroup(textEditingController.text, context);
+                },
+                controller: textEditingController,
+                decoration: InputDecoration(hintText: 'Enter group name'),
+                textInputAction: TextInputAction.send,
+                style: TextStyle(fontSize: 16.0, color: Colors.black),
+              ),
+            ),
+          ),
+          Container(
+            child: IconButton(
+                icon: Icon(Icons.send),
+                onPressed:
+                    () {} //onAddGroup(textEditingController.text, context),
+                ),
+          )
+        ],
+      ),
     );
   }
 }

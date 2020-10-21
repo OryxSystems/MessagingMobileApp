@@ -4,10 +4,12 @@ import 'package:CommunityHelp/src/screens/add_group.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+import 'screens/edit_group.dart';
 import 'screens/groups_screen.dart';
 import 'screens/chat_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/add_group_confirm.dart';
+import 'screens/new_report.dart';
 import 'models/group_model.dart';
 
 class App extends StatelessWidget {
@@ -23,6 +25,8 @@ class App extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Chat App',
+        /*theme:
+            ThemeData(primaryColor: Colors.red[200], accentColor: Colors.grey),*/
         onGenerateRoute: routes,
       ),
     );
@@ -30,13 +34,12 @@ class App extends StatelessWidget {
 
   //TODO - clean up
   Route routes(RouteSettings settings) {
-    if (settings.name == '/') {
+    String content = settings.name.replaceFirst('/', '');
+    if (content == '') {
       return MaterialPageRoute(builder: (context) {
         return LoginScreen();
       });
     } else {
-      String content = settings.name.replaceFirst('/', '');
-      print('$content');
       if (content == 'add_group') {
         return MaterialPageRoute(builder: (context) {
           return AddGroup();
@@ -49,28 +52,64 @@ class App extends StatelessWidget {
         } else {
           content = content.replaceFirst('{', '');
           content = content.replaceFirst('}', '');
-          //var split = content.split(': ');
-          //print('${split[0]} and ${split[1]}');
-          if (content.startsWith('h')) {
+          if (content.startsWith('home')) {
+            content = content.replaceFirst('home', '');
             var split = content.split(': ');
-            split[0] = split[0].replaceFirst('h', '');
-            //TODO - change content to return user & groupId
             return MaterialPageRoute(builder: (context) {
               return GroupsScreen(name: split[0], number: split[1]);
             });
           } else {
-            var split = content.split(': ');
-            return MaterialPageRoute(builder: (context) {
-              //final name = settings.name.replaceFirst('/', '');
-              return ChatScreen(
-                user: split[0],
-                groupId: split[1],
-                //chatId: split[2],
-              );
-            });
+            if (content.startsWith('report_incident')) {
+              content = content.replaceFirst('report_incident', '');
+              return MaterialPageRoute(builder: (context) {
+                return NewReport(
+                  groupId: content,
+                );
+              });
+            } else {
+              if (content.startsWith('edit_group')) {
+                content = content.replaceFirst('edit_group', '');
+                return MaterialPageRoute(builder: (context) {
+                  return EditGroup(
+                    groupId: content,
+                  );
+                });
+              } else {
+                return MaterialPageRoute(builder: (context) {
+                  content = content.replaceFirst('chat', '');
+                  return ChatScreen(
+                    groupId: content,
+                  );
+                });
+              }
+            }
           }
         }
       }
     }
   }
+
+/*
+  Route routes2(RouteSettings settings) {
+    String content = settings.name.replaceFirst('/', '');
+    content = content.replaceFirst('{', '').replaceFirst('}', '');
+    switch (settings.name) {
+      case '':
+        return MaterialPageRoute(builder: (context) {
+          return LoginScreen();
+        });
+        break;
+      case '/':
+        return MaterialPageRoute(builder: (context) {
+          return LoginScreen();
+        });
+        break;
+      default:
+        print('????????????????????????????????????');
+        print('THIS IS THE DEFAULT NAVIGATION');
+        return MaterialPageRoute(builder: (context) {
+          return LoginScreen();
+        });
+    }
+  }*/
 }
