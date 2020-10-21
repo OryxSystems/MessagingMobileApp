@@ -52,7 +52,7 @@ class GroupsScreen extends StatelessWidget {
       trailing: Icon(Icons.keyboard_arrow_right),
       title: Text(document['groupName']),
       onTap: () {
-        Navigator.pushNamed(context, '/{$number: ${document['groupId']}}');
+        Navigator.pushNamed(context, '/chat{${document['groupId']}}');
       },
     );
   }
