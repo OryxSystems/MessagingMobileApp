@@ -14,8 +14,8 @@ class GroupsScreen extends StatelessWidget {
   Widget build(context) {
     // adds the name and number to the provider
     var user = context.watch<UserModel>();
-    user.enterName(name);
-    user.enterNumber(number);
+    user.setName(name);
+    user.setNumber(number);
 
     return Scaffold(
       appBar: AppBar(

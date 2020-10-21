@@ -15,7 +15,7 @@ class UserItemEdit extends StatelessWidget {
   Widget build(BuildContext context) {
     var loggedUser = context.watch<UserModel>();
     loggedInUser = loggedUser.number;
-    UserModel user = UserModel(document['name'], document['number']);
+    UserModel user = UserModel(document['name'], document['number'], false);
     bool isAdded =
         context.select<GroupModel, bool>((group) => group.users.contains(user));
     bool isAdmin = false;

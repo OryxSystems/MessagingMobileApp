@@ -20,7 +20,8 @@ class App extends StatelessWidget {
             create: (context) => Repository(FirebaseFirestore.instance)),
         ChangeNotifierProvider(create: (context) => GroupModel()),
         Provider(
-          create: (context) => UserModel('attempt_name', 'attempt_number'),
+          create: (context) =>
+              UserModel('attempt_name', 'attempt_number', false),
         )
       ],
       child: MaterialApp(

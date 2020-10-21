@@ -125,7 +125,8 @@ class ConfirmGroupState extends State<ConfirmGroup> {
           .doc(number);
 
       FirebaseFirestore.instance.runTransaction((transaction) async {
-        transaction.set(documentReference, {'name': name, 'admin': admin});
+        transaction.set(documentReference,
+            {'name': name, 'number': number, 'admin': admin});
       });
     } catch (err) {
       print(err);

@@ -1,4 +1,3 @@
-import 'package:CommunityHelp/src/models/user_model_group.dart';
 import 'package:CommunityHelp/src/resources/repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +16,7 @@ class EditGroup extends StatefulWidget {
 class EditGroupState extends State<EditGroup> {
   final String groupId;
   String userName;
-  Stream<List<UserModelGroup>> _userStream;
+  Stream<List<UserModel>> _userStream;
   EditGroupState({this.groupId});
   final TextEditingController textEditingController = TextEditingController();
 
@@ -36,7 +35,6 @@ class EditGroupState extends State<EditGroup> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.group_add),
         onPressed: () {
-          //addUsers();
           Alert(
               context: context,
               title: 'Add a user',
@@ -64,7 +62,7 @@ class EditGroupState extends State<EditGroup> {
           Column(
             children: <Widget>[
               Flexible(
-                child: StreamBuilder<List<UserModelGroup>>(
+                child: StreamBuilder<List<UserModel>>(
                   stream: _userStream,
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
@@ -72,8 +70,9 @@ class EditGroupState extends State<EditGroup> {
                     }
                     return ListView(
                       children: snapshot.data.map(
-                        (UserModelGroup user) {
-                          return buildUser(context, user.name, user.admin);
+                        (UserModel user) {
+                          return buildUser(
+                              context, user.name, user.number, user.isAdmin);
                         },
                       ).toList(),
                     );
@@ -88,12 +87,14 @@ class EditGroupState extends State<EditGroup> {
     );
   }
 
-  Widget buildUser(BuildContext context, String name, bool isAdmin) {
+  Widget buildUser(
+      BuildContext context, String name, String number, bool isAdmin) {
     return ListTile(
       //TODO - change to use number as name might not be unique
       title: (userName == name) ? Text('You') : Text('$name'),
       trailing: isAdmin ? Text('Admin') : null,
       onTap: () {
+        print('number: $number');
         Alert(context: context, title: name, buttons: [
           DialogButton(
             child: Text('make admin'),
@@ -110,9 +111,5 @@ class EditGroupState extends State<EditGroup> {
         ]).show();
       },
     );
-  }
-
-  addUsers() {
-    print('add new user');
   }
 }
