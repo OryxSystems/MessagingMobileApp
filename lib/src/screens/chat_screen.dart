@@ -186,6 +186,9 @@ class ChatScreenState extends State<ChatScreen> {
           trailing: (image != 'none') ? Icon(Icons.image) : Icon(Icons.report),
           onTap: () async {
             try {
+              if (image.endsWith('.mp4')) {
+                image = 'none';
+              }
               Alert(
                       context: context,
                       title: 'Icident: $incident',
