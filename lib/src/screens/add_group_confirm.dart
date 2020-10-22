@@ -69,7 +69,7 @@ class ConfirmGroupState extends State<ConfirmGroup> {
     } catch (err) {
       print(err);
     }
-
+    //TODO - use repository more
     for (UserModel user in group.users) {
       addUsers(groupId, user.number, user.name);
     }

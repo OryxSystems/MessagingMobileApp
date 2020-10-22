@@ -70,16 +70,21 @@ class App extends StatelessWidget {
             } else {
               if (content.startsWith('edit_group')) {
                 content = content.replaceFirst('edit_group', '');
+                var split = content.split(': ');
                 return MaterialPageRoute(builder: (context) {
                   return EditGroup(
-                    groupId: content,
+                    groupId: split[0],
+                    groupName: split[1],
                   );
                 });
               } else {
                 return MaterialPageRoute(builder: (context) {
                   content = content.replaceFirst('chat', '');
+                  var split = content.split(': ');
+                  print('id: ${split[0]}; name: ${split[1]}');
                   return ChatScreen(
-                    groupId: content,
+                    groupId: split[0],
+                    groupName: split[1],
                   );
                 });
               }
