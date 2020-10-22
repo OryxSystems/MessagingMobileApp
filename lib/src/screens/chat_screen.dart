@@ -49,8 +49,7 @@ class ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
-            Navigator.pushNamed(
-                context, '/edit_group{{$groupId} : $groupName}');
+            Navigator.pushNamed(context, '/edit_group{$groupId : $groupName}');
           },
           child: Text('Chat'),
         ),
