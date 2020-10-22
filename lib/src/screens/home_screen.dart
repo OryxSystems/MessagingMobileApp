@@ -3,13 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../models/user_model.dart';
 
-class GroupsScreen extends StatelessWidget {
+class HomeScreen extends StatelessWidget {
   final String name;
   final String number;
   final String _collection1 = 'users';
   final String _collection2 = 'groups';
 
-  GroupsScreen({this.name, this.number});
+  HomeScreen({this.name, this.number});
 
   Widget build(context) {
     // adds the name and number to the provider
@@ -19,7 +19,7 @@ class GroupsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Groups'),
+        title: Text('Chats'),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.group_add),

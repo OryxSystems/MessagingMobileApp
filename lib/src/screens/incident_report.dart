@@ -70,7 +70,7 @@ class NewReportState extends State<NewReport> {
             child: Container(
               height: MediaQuery.of(context).size.height * 0.5,
               width: MediaQuery.of(context).size.width * 0.5,
-              child: (imageFile != null)
+              child: (imageFile != null && !fileName.endsWith('.mp4'))
                   ? Stack(children: <Widget>[
                       Image.file(imageFile),
                       Positioned(
@@ -145,45 +145,6 @@ class NewReportState extends State<NewReport> {
                       ]).show();
                 },
               ),
-
-/*
-              Column(
-                children: [
-                  IconButton(
-                    iconSize: 40.0,
-                    icon: Icon(Icons.camera_alt),
-                    onPressed: () {
-                      getCameraImage(context);
-                    },
-                  ),
-                  IconButton(
-                    iconSize: 40.0,
-                    icon: Icon(Icons.videocam),
-                    onPressed: () {
-                      print('get vid');
-                      //getCameraImage(context);
-                    },
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  IconButton(
-                    iconSize: 40.0,
-                    icon: Icon(Icons.photo),
-                    onPressed: () {
-                      getGalleryImage(context);
-                    },
-                  ),
-                  IconButton(
-                    iconSize: 40.0,
-                    icon: Icon(Icons.video_library),
-                    onPressed: () {
-                      print('get vid gallery');
-                    },
-                  ),
-                ],
-              ),*/
               IconButton(
                 iconSize: 40.0,
                 icon: Icon(Icons.send),
@@ -229,7 +190,6 @@ class NewReportState extends State<NewReport> {
         imageFile = File(pickedFile.path);
         Uuid unique = Uuid();
         fileName = unique.v4() + basename(imageFile.path);
-        //uploadImageToFirebase(context, imageFile, fileName);
       }
     });
   }
@@ -242,8 +202,6 @@ class NewReportState extends State<NewReport> {
         imageFile = File(pickedFile.path);
         Uuid unique = Uuid();
         fileName = unique.v4() + basename(imageFile.path);
-        //uploadImageToFirebase(context, imageFile, fileName);
-
       }
     });
   }
@@ -267,11 +225,10 @@ class NewReportState extends State<NewReport> {
 
     setState(() {
       if (pickedFile != null) {
-        //imageFile = File(pickedFile.path);
+        imageFile = File(pickedFile.path);
         Uuid unique = Uuid();
-        //fileName = unique.v4() + basename(imageFile.path);
-        //uploadImageToFirebase(context, imageFile, fileName);
-
+        fileName = unique.v4() + basename(imageFile.path) + '.mp4';
+        //uploadVideoToFirebase(context, imageFile, fileName);
       }
     });
   }
@@ -280,7 +237,11 @@ class NewReportState extends State<NewReport> {
     print('Incident: $incident; Description: $description');
 
     if (imageFile != null) {
-      uploadImageToFirebase(context, imageFile, fileName);
+      if (fileName.endsWith('.mp4')) {
+        uploadVideoToFirebase(context, imageFile, fileName);
+      } else {
+        uploadImageToFirebase(context, imageFile, fileName);
+      }
     } else {
       fileName = 'none';
     }

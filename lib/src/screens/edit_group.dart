@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:CommunityHelp/src/resources/repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import '../resources/repository.dart';
 
+import '../resources/repository.dart';
 import '../models/user_model.dart';
 
 class EditGroup extends StatefulWidget {
@@ -84,7 +83,6 @@ class EditGroupState extends State<EditGroup> {
                   },
                 ),
               ),
-              //buildInput()
             ],
           )
         ],
@@ -92,6 +90,7 @@ class EditGroupState extends State<EditGroup> {
     );
   }
 
+// returns the users in the group
   Widget buildUser(
       BuildContext context, String name, String number, bool isAdmin) {
     return ListTile(
@@ -119,23 +118,15 @@ class EditGroupState extends State<EditGroup> {
     );
   }
 
+// adds the 'number' to the group
   addUser(BuildContext context, String number) async {
-    /*var transformer = new StreamTransformer.fromHandlers(
-        handleData: (List<UserModel> users, sink) {
-      for (UserModel user in users) {
-        if (user.number == number) {
-          isNumber = true;
-          break;
-        }
-      }
-    });*/
     number = number.trim();
     bool isNumber = false;
     var count = 0;
     UserModel newUser;
-    //Provider.of(context);
     Stream<List<UserModel>> stream =
         Provider.of<Repository>(context, listen: false).getUsers();
+
     await for (List<UserModel> users in stream) {
       for (UserModel user in users) {
         print('for $number >> user $count: ${user.number}');
@@ -146,17 +137,14 @@ class EditGroupState extends State<EditGroup> {
         }
       }
       if (isNumber) {
+        // adds the user to the group
         Provider.of<Repository>(context, listen: false)
             .addUsers(groupId, newUser.number, newUser.name, false);
 
+        // adds the group to the user's list of groups
         Provider.of<Repository>(context, listen: false)
             .addGroup(newUser.number, groupId, groupName);
       }
     }
-
-/*
-    if (isNumber){
-
-    }*/
   }
 }

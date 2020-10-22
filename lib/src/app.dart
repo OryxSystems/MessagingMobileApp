@@ -4,21 +4,25 @@ import 'package:CommunityHelp/src/screens/add_group.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+
 import 'screens/edit_group.dart';
-import 'screens/groups_screen.dart';
+import 'screens/home_screen.dart';
 import 'screens/chat_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/add_group_confirm.dart';
-import 'screens/new_report.dart';
+import 'screens/incident_report.dart';
 import 'models/group_model.dart';
 
 class App extends StatelessWidget {
   Widget build(context) {
     return MultiProvider(
       providers: [
+        // Provider to access the firebase
         Provider<Repository>(
             create: (context) => Repository(FirebaseFirestore.instance)),
+        // Provider for adding a group (whether or not a user is seleted)
         ChangeNotifierProvider(create: (context) => GroupModel()),
+        // Provider for the logged in user - creates it here but initialised in home_screen
         Provider(
           create: (context) =>
               UserModel('attempt_name', 'attempt_number', false),
@@ -26,14 +30,11 @@ class App extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Chat App',
-        /*theme:
-            ThemeData(primaryColor: Colors.red[200], accentColor: Colors.grey),*/
         onGenerateRoute: routes,
       ),
     );
   }
 
-  //TODO - clean up
   Route routes(RouteSettings settings) {
     String content = settings.name.replaceFirst('/', '');
     if (content == '') {
@@ -57,7 +58,7 @@ class App extends StatelessWidget {
             content = content.replaceFirst('home', '');
             var split = content.split(': ');
             return MaterialPageRoute(builder: (context) {
-              return GroupsScreen(name: split[0], number: split[1]);
+              return HomeScreen(name: split[0], number: split[1]);
             });
           } else {
             if (content.startsWith('report_incident')) {
@@ -97,28 +98,4 @@ class App extends StatelessWidget {
       }
     }
   }
-
-/*
-  Route routes2(RouteSettings settings) {
-    String content = settings.name.replaceFirst('/', '');
-    content = content.replaceFirst('{', '').replaceFirst('}', '');
-    switch (settings.name) {
-      case '':
-        return MaterialPageRoute(builder: (context) {
-          return LoginScreen();
-        });
-        break;
-      case '/':
-        return MaterialPageRoute(builder: (context) {
-          return LoginScreen();
-        });
-        break;
-      default:
-        print('????????????????????????????????????');
-        print('THIS IS THE DEFAULT NAVIGATION');
-        return MaterialPageRoute(builder: (context) {
-          return LoginScreen();
-        });
-    }
-  }*/
 }
