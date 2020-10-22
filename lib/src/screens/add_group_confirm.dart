@@ -69,7 +69,7 @@ class ConfirmGroupState extends State<ConfirmGroup> {
     } catch (err) {
       print(err);
     }
-
+    //TODO - use repository more
     for (UserModel user in group.users) {
       addUsers(groupId, user.number, user.name);
     }
@@ -125,7 +125,8 @@ class ConfirmGroupState extends State<ConfirmGroup> {
           .doc(number);
 
       FirebaseFirestore.instance.runTransaction((transaction) async {
-        transaction.set(documentReference, {'name': name, 'admin': admin});
+        transaction.set(documentReference,
+            {'name': name, 'number': number, 'admin': admin});
       });
     } catch (err) {
       print(err);

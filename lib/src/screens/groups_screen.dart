@@ -14,8 +14,8 @@ class GroupsScreen extends StatelessWidget {
   Widget build(context) {
     // adds the name and number to the provider
     var user = context.watch<UserModel>();
-    user.enterName(name);
-    user.enterNumber(number);
+    user.setName(name);
+    user.setNumber(number);
 
     return Scaffold(
       appBar: AppBar(
@@ -52,7 +52,8 @@ class GroupsScreen extends StatelessWidget {
       trailing: Icon(Icons.keyboard_arrow_right),
       title: Text(document['groupName']),
       onTap: () {
-        Navigator.pushNamed(context, '/chat{${document['groupId']}}');
+        Navigator.pushNamed(
+            context, '/chat{${document['groupId']}: ${document['groupName']}}');
       },
     );
   }

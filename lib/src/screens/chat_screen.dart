@@ -12,9 +12,11 @@ import '../models/user_model.dart';
 class ChatScreen extends StatefulWidget {
   //final String user;
   final String groupId;
-  ChatScreen({this.groupId});
+  final String groupName;
+  ChatScreen({this.groupId, this.groupName});
 
-  ChatScreenState createState() => ChatScreenState(groupId: groupId);
+  ChatScreenState createState() =>
+      ChatScreenState(groupId: groupId, groupName: groupName);
 }
 
 class ChatScreenState extends State<ChatScreen> {
@@ -25,17 +27,20 @@ class ChatScreenState extends State<ChatScreen> {
   String userName;
   String userNumber;
   final String groupId;
+  final String groupName;
   final String messages = 'messages';
   Stream<List<Message>> _messageStream;
 
   void initState() {
     super.initState();
     _messageStream = context.read<Repository>().getMessages(groupId);
+    print('groupId in initStae: $groupId');
   }
 
-  ChatScreenState({this.groupId});
+  ChatScreenState({this.groupId, this.groupName});
 
   Widget build(context) {
+    //print('id: $groupId; name: $groupName');
     var user = context.watch<UserModel>();
     userName = user.name;
     userNumber = user.number;
@@ -44,9 +49,10 @@ class ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, '/edit_group{$groupId}');
+            print('content: /edit_group{$groupId: $groupName}');
+            Navigator.pushNamed(context, '/edit_group{$groupId: $groupName}');
           },
-          child: Text('Chat'),
+          child: Text('$groupName'),
         ),
         actions: <Widget>[
           Padding(
@@ -62,7 +68,8 @@ class ChatScreenState extends State<ChatScreen> {
             padding: EdgeInsets.only(right: 20.0),
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/edit_group{$groupId}');
+                Navigator.pushNamed(
+                    context, '/edit_group{$groupId: $groupName}');
               },
               child: Icon(Icons.edit),
             ),
@@ -303,4 +310,9 @@ class ChatScreenState extends State<ChatScreen> {
       if (pickedFile != null) {}
     });
   }
+/*
+  @override
+  void dispose() {
+    super.dispose();
+  }*/
 }

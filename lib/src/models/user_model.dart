@@ -1,8 +1,9 @@
 class UserModel {
   String name;
   String number;
+  bool isAdmin;
 
-  UserModel(this.name, this.number);
+  UserModel(this.name, this.number, this.isAdmin);
 
   //TODO - case where numbers might not be unique
   int get hashCode => number.hashCode;
@@ -10,11 +11,15 @@ class UserModel {
   bool operator ==(Object other) =>
       other is UserModel && other.number == number;
 
-  enterName(String newName) {
+  setName(String newName) {
     name = newName;
   }
 
-  enterNumber(String newNumber) {
+  setNumber(String newNumber) {
     number = newNumber;
+  }
+
+  setAdmin(bool admin) {
+    isAdmin = admin;
   }
 }
