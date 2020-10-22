@@ -40,7 +40,7 @@ class ChatScreenState extends State<ChatScreen> {
   ChatScreenState({this.groupId, this.groupName});
 
   Widget build(context) {
-    print('id: $groupId; name: $groupName');
+    //print('id: $groupId; name: $groupName');
     var user = context.watch<UserModel>();
     userName = user.name;
     userNumber = user.number;
@@ -49,9 +49,10 @@ class ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, '/edit_group{$groupId : $groupName}');
+            print('content: /edit_group{$groupId: $groupName}');
+            Navigator.pushNamed(context, '/edit_group{$groupId: $groupName}');
           },
-          child: Text('Chat'),
+          child: Text('$groupName'),
         ),
         actions: <Widget>[
           Padding(
@@ -67,7 +68,8 @@ class ChatScreenState extends State<ChatScreen> {
             padding: EdgeInsets.only(right: 20.0),
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/edit_group{$groupId}');
+                Navigator.pushNamed(
+                    context, '/edit_group{$groupId: $groupName}');
               },
               child: Icon(Icons.edit),
             ),

@@ -69,8 +69,11 @@ class App extends StatelessWidget {
               });
             } else {
               if (content.startsWith('edit_group')) {
+                print(content);
                 content = content.replaceFirst('edit_group', '');
                 var split = content.split(': ');
+                print('id: ${split[0]}; name: ${split[1]}');
+
                 return MaterialPageRoute(builder: (context) {
                   return EditGroup(
                     groupId: split[0],

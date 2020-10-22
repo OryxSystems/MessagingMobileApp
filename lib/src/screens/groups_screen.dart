@@ -52,8 +52,8 @@ class GroupsScreen extends StatelessWidget {
       trailing: Icon(Icons.keyboard_arrow_right),
       title: Text(document['groupName']),
       onTap: () {
-        Navigator.pushNamed(context,
-            '/chat{${document['groupId']} : ${document['groupName']}}');
+        Navigator.pushNamed(
+            context, '/chat{${document['groupId']}: ${document['groupName']}}');
       },
     );
   }

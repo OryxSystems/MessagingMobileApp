@@ -148,9 +148,9 @@ class EditGroupState extends State<EditGroup> {
       if (isNumber) {
         Provider.of<Repository>(context, listen: false)
             .addUsers(groupId, newUser.number, newUser.name, false);
-//TODO - change groupName
+
         Provider.of<Repository>(context, listen: false)
-            .addGroup(newUser.number, groupId, 'oryx group');
+            .addGroup(newUser.number, groupId, groupName);
       }
     }
 
