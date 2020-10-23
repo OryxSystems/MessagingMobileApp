@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:video_player/video_player.dart';
 
 import '../widgets/upload_image.dart';
 import '../models/user_model.dart';
@@ -19,6 +20,7 @@ class NewReport extends StatefulWidget {
 
 class NewReportState extends State<NewReport> {
   final TextEditingController textEditingController = TextEditingController();
+  VideoPlayerController videoPlayerController;
   final ImagePicker picker = ImagePicker();
   final String groupId;
   File imageFile;
@@ -67,6 +69,37 @@ class NewReportState extends State<NewReport> {
             ),
           ),
           Center(
+            child: (videoPlayerController != null)
+                ? videoPlayerController.value.initialized
+                    ? AspectRatio(
+                        aspectRatio: videoPlayerController.value.aspectRatio,
+                        child: Stack(children: <Widget>[
+                          VideoPlayer(videoPlayerController),
+                          Positioned(
+                              top: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                child: videoPlayerController.value.isPlaying
+                                    ? Icon(Icons.pause)
+                                    : Icon(Icons.play_arrow),
+                                onTap: () {
+                                  setState(() {
+                                    (videoPlayerController.value.isPlaying)
+                                        //? print('pause')
+                                        //: print('play');
+                                        ? videoPlayerController.pause()
+                                        : videoPlayerController.play();
+                                  });
+                                },
+                              )),
+                        ]),
+                      )
+                    : Container(
+                        child: CircularProgressIndicator(),
+                      )
+                : Text('not loaded'),
+          ),
+          /*Center(
             child: Container(
               height: MediaQuery.of(context).size.height * 0.5,
               width: MediaQuery.of(context).size.width * 0.5,
@@ -91,7 +124,7 @@ class NewReportState extends State<NewReport> {
                       textAlign: TextAlign.center,
                     ),
             ),
-          ),
+          ),*/
           buildInput(context),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -108,12 +141,14 @@ class NewReportState extends State<NewReport> {
                           child: Text('Camera'),
                           onPressed: () {
                             getCameraImage(context);
+                            Navigator.pop(context);
                           },
                         ),
                         DialogButton(
                           child: Text('Gallery'),
                           onPressed: () {
                             getGalleryImage(context);
+                            Navigator.pop(context);
                           },
                         )
                       ]).show();
@@ -132,6 +167,7 @@ class NewReportState extends State<NewReport> {
                           child: Text('Camera'),
                           onPressed: () {
                             getCameraVideo(context);
+                            Navigator.pop(context);
                             //getCameraImage(context);
                           },
                         ),
@@ -139,6 +175,7 @@ class NewReportState extends State<NewReport> {
                           child: Text('Gallery'),
                           onPressed: () {
                             getGalleryVideo(context);
+                            Navigator.pop(context);
                             //getGalleryImage(context);
                           },
                         )
@@ -211,12 +248,17 @@ class NewReportState extends State<NewReport> {
 
     setState(() {
       if (pickedFile != null) {
-        //imageFile = File(pickedFile.path);
-        //Uuid unique = Uuid();
-        //fileName = unique.v4() + basename(imageFile.path);
+        imageFile = File(pickedFile.path);
+        Uuid unique = Uuid();
+        fileName = unique.v4() + basename(imageFile.path);
+        videoPlayerController = VideoPlayerController.file(imageFile);
+
         //uploadImageToFirebase(context, imageFile, fileName);
 
       }
+    });
+    videoPlayerController.initialize().then((value) {
+      setState(() {});
     });
   }
 
