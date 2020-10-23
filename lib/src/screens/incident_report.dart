@@ -11,6 +11,7 @@ import 'package:video_player/video_player.dart';
 
 import '../widgets/upload_image.dart';
 import '../models/user_model.dart';
+import '../screens/play_video.dart';
 
 class NewReport extends StatefulWidget {
   final String groupId;
@@ -24,6 +25,7 @@ class NewReportState extends State<NewReport> {
   final ImagePicker picker = ImagePicker();
   final String groupId;
   File imageFile;
+  File videoFile;
   String fileName;
   String selectedIncident = '1';
   String userNumber;
@@ -68,63 +70,61 @@ class NewReportState extends State<NewReport> {
               ),
             ),
           ),
-          Center(
-            child: (videoPlayerController != null)
-                ? videoPlayerController.value.initialized
-                    ? AspectRatio(
-                        aspectRatio: videoPlayerController.value.aspectRatio,
-                        child: Stack(children: <Widget>[
-                          VideoPlayer(videoPlayerController),
-                          Positioned(
-                              top: 0,
-                              right: 0,
-                              child: GestureDetector(
-                                child: videoPlayerController.value.isPlaying
-                                    ? Icon(Icons.pause)
-                                    : Icon(Icons.play_arrow),
-                                onTap: () {
-                                  setState(() {
-                                    (videoPlayerController.value.isPlaying)
-                                        //? print('pause')
-                                        //: print('play');
-                                        ? videoPlayerController.pause()
-                                        : videoPlayerController.play();
-                                  });
-                                },
-                              )),
-                        ]),
-                      )
-                    : Container(
-                        child: CircularProgressIndicator(),
-                      )
-                : Text('not loaded'),
-          ),
-          /*Center(
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.5,
-              width: MediaQuery.of(context).size.width * 0.5,
-              child: (imageFile != null && !fileName.endsWith('.mp4'))
-                  ? Stack(children: <Widget>[
-                      Image.file(imageFile),
-                      Positioned(
-                          top: 0,
-                          right: 0,
-                          child: GestureDetector(
-                            child: Icon(Icons.close),
-                            onTap: () {
-                              setState(() {
-                                imageFile = null;
-                                //fileName = null;
-                              });
-                            },
-                          )),
-                    ])
-                  : Text(
-                      'No image selected',
-                      textAlign: TextAlign.center,
-                    ),
-            ),
+          /*RaisedButton(
+            child: Text('Play Video'),
+            onPressed: () {
+              if (videoFile != null) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PlayVideo(
+                        vidFile: videoFile,
+                      ),
+                    ));
+              }
+            },
           ),*/
+          Center(
+              child: Stack(children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height * 0.5,
+              width: MediaQuery.of(context).size.width * 0.6,
+              child: (imageFile != null && !fileName.endsWith('.mp4'))
+                  ? Image.file(imageFile)
+                  : (videoFile != null)
+                      ? RaisedButton(
+                          child: Text('Play Video'),
+                          onPressed: () {
+                            if (videoFile != null) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PlayVideo(
+                                      vidFile: videoFile,
+                                    ),
+                                  ));
+                            }
+                          },
+                        )
+                      : Text(
+                          'No file selected',
+                          textAlign: TextAlign.center,
+                        ),
+            ),
+            Positioned(
+                top: 0,
+                right: 0,
+                child: GestureDetector(
+                  child: Icon(Icons.close),
+                  onTap: () {
+                    setState(() {
+                      imageFile = null;
+                      videoFile = null;
+                      //fileName = null;
+                    });
+                  },
+                )),
+          ])),
           buildInput(context),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -197,6 +197,12 @@ class NewReportState extends State<NewReport> {
     );
   }
 
+  void dispose() {
+    textEditingController.dispose();
+    videoPlayerController.dispose();
+    super.dispose();
+  }
+
   // the input text field who's input data is a new message
   Widget buildInput(BuildContext context) {
     return Container(
@@ -227,6 +233,7 @@ class NewReportState extends State<NewReport> {
         imageFile = File(pickedFile.path);
         Uuid unique = Uuid();
         fileName = unique.v4() + basename(imageFile.path);
+        videoFile = null;
       }
     });
   }
@@ -239,6 +246,7 @@ class NewReportState extends State<NewReport> {
         imageFile = File(pickedFile.path);
         Uuid unique = Uuid();
         fileName = unique.v4() + basename(imageFile.path);
+        videoFile = null;
       }
     });
   }
@@ -248,17 +256,11 @@ class NewReportState extends State<NewReport> {
 
     setState(() {
       if (pickedFile != null) {
-        imageFile = File(pickedFile.path);
+        videoFile = File(pickedFile.path);
         Uuid unique = Uuid();
-        fileName = unique.v4() + basename(imageFile.path);
-        videoPlayerController = VideoPlayerController.file(imageFile);
-
-        //uploadImageToFirebase(context, imageFile, fileName);
-
+        fileName = unique.v4() + basename(videoFile.path);
+        imageFile = null;
       }
-    });
-    videoPlayerController.initialize().then((value) {
-      setState(() {});
     });
   }
 
@@ -267,10 +269,10 @@ class NewReportState extends State<NewReport> {
 
     setState(() {
       if (pickedFile != null) {
-        imageFile = File(pickedFile.path);
+        videoFile = File(pickedFile.path);
         Uuid unique = Uuid();
-        fileName = unique.v4() + basename(imageFile.path) + '.mp4';
-        //uploadVideoToFirebase(context, imageFile, fileName);
+        fileName = unique.v4() + basename(videoFile.path) + '.mp4';
+        imageFile = null;
       }
     });
   }
@@ -279,13 +281,13 @@ class NewReportState extends State<NewReport> {
     print('Incident: $incident; Description: $description');
 
     if (imageFile != null) {
-      if (fileName.endsWith('.mp4')) {
-        uploadVideoToFirebase(context, imageFile, fileName);
-      } else {
-        uploadImageToFirebase(context, imageFile, fileName);
-      }
+      uploadImageToFirebase(context, imageFile, fileName);
     } else {
-      fileName = 'none';
+      if (videoFile != null) {
+        uploadVideoToFirebase(context, videoFile, fileName);
+      } else {
+        fileName = 'none';
+      }
     }
     onSendMessage(description, incident);
     Navigator.pop(context);
@@ -312,5 +314,34 @@ class NewReportState extends State<NewReport> {
         'user': userNumber,
       });
     });
+  }
+
+  Widget getVideoFirstFrame() {
+    return Center(
+      child: (videoPlayerController != null)
+          ? videoPlayerController.value.initialized
+              ? AspectRatio(
+                  aspectRatio: videoPlayerController.value.aspectRatio,
+                  child: Container(child: VideoPlayer(videoPlayerController)),
+                  /*Center(
+                              child: RaisedButton(
+                            child: videoPlayerController.value.isPlaying
+                                ? Icon(Icons.pause)
+                                : Icon(Icons.play_arrow),
+                            onPressed: () {
+                              setState(() {
+                                (videoPlayerController.value.isPlaying)
+                                    ? videoPlayerController.pause()
+                                    : videoPlayerController.play();
+                              });
+                            },
+                          )),
+                        ]),*/
+                )
+              : Container(
+                  child: CircularProgressIndicator(),
+                )
+          : Text('not loaded'),
+    );
   }
 }
