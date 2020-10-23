@@ -99,9 +99,8 @@ class PlayVideoState extends State<PlayVideo> {
     );
   }
 
-//TODO - do this for all controllers
   void dispose() {
     super.dispose();
-    videoPlayerController.dispose();
+    videoPlayerController?.dispose();
   }
 }

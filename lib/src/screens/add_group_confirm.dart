@@ -14,12 +14,18 @@ class ConfirmGroup extends StatefulWidget {
 
 class ConfirmGroupState extends State<ConfirmGroup> {
   final TextEditingController textEditingController = TextEditingController();
+
   Widget build(context) {
     return Scaffold(
         appBar: AppBar(
           title: Text('New group'),
         ),
         body: buildInput());
+  }
+
+  void dispose() {
+    textEditingController?.dispose();
+    super.dispose();
   }
 
   Widget buildInput() {
@@ -98,7 +104,7 @@ class ConfirmGroupState extends State<ConfirmGroup> {
           .collection('users')
           .doc(number)
           .collection('groups')
-          .doc(groupName);
+          .doc(groupId);
 
       FirebaseFirestore.instance.runTransaction((transaction) async {
         transaction.set(

@@ -3,16 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+
 import '../resources/load_image.dart';
 import '../resources/load_video.dart';
 import '../screens/play_video.dart';
-
-import 'package:CommunityHelp/src/models/message_model.dart';
-import 'package:CommunityHelp/src/resources/repository.dart';
+import '../models/message_model.dart';
+import '../resources/repository.dart';
 import '../models/user_model.dart';
 
 class ChatScreen extends StatefulWidget {
-  //final String user;
   final String groupId;
   final String groupName;
   ChatScreen({this.groupId, this.groupName});
@@ -37,6 +36,12 @@ class ChatScreenState extends State<ChatScreen> {
     super.initState();
     _messageStream = context.read<Repository>().getMessages(groupId);
     print('groupId in initStae: $groupId');
+  }
+
+  void dispose() {
+    textEditingController?.dispose();
+    listScrollController?.dispose();
+    super.dispose();
   }
 
   ChatScreenState({this.groupId, this.groupName});

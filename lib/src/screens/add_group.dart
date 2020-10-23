@@ -54,6 +54,11 @@ class AddGroupState extends State<AddGroup> {
     );
   }
 
+  void dispose() {
+    textEditingController?.dispose();
+    super.dispose();
+  }
+
   Widget buildInput() {
     return Container(
       decoration: BoxDecoration(

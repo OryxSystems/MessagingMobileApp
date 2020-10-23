@@ -28,6 +28,11 @@ class EditGroupState extends State<EditGroup> {
     _userStream = context.read<Repository>().getUsersInGroup(groupId);
   }
 
+  void dispose() {
+    textEditingController?.dispose();
+    super.dispose();
+  }
+
   Widget build(context) {
     var user = context.watch<UserModel>();
     userNumber = user.number;

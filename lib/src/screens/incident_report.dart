@@ -198,8 +198,14 @@ class NewReportState extends State<NewReport> {
   }
 
   void dispose() {
-    textEditingController.dispose();
-    videoPlayerController.dispose();
+    /*if (textEditingController != null) {
+      textEditingController.dispose();
+    }
+    if (videoPlayerController != null) {
+      videoPlayerController.dispose();
+    }*/
+    videoPlayerController?.dispose();
+    textEditingController?.dispose();
     super.dispose();
   }
 
