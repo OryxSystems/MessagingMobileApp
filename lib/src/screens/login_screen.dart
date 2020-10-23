@@ -17,7 +17,9 @@ class LoginScreenState extends State<LoginScreen> {
           stream: FirebaseFirestore.instance.collection('users').snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Text('Loading...');
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }
             return ListView.builder(
               itemCount: snapshot.data.documents.length,

@@ -4,6 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import '../resources/load_image.dart';
+import '../resources/load_video.dart';
+import '../screens/play_video.dart';
 
 import 'package:CommunityHelp/src/models/message_model.dart';
 import 'package:CommunityHelp/src/resources/repository.dart';
@@ -85,7 +87,9 @@ class ChatScreenState extends State<ChatScreen> {
                   stream: _messageStream,
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
-                      return Text('Loading...');
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
                     }
                     return ListView(
                       reverse: true,
@@ -183,17 +187,37 @@ class ChatScreenState extends State<ChatScreen> {
         ListTile(
           title: Text('Incident: $incident'),
           subtitle: Text(content),
-          trailing: (image != 'none') ? Icon(Icons.image) : Icon(Icons.report),
+          trailing: Icon(Icons.report),
           onTap: () async {
+            bool isVid = false;
+            String vidUrl;
             try {
               if (image.endsWith('.mp4')) {
-                image = 'none';
+                //image = 'none';
+                isVid = true;
+                vidUrl = await loadVideo(context, 'videos/$image');
               }
               Alert(
                       context: context,
                       title: 'Icident: $incident',
                       desc: 'Description: $content',
-                      image: (image != 'none')
+                      buttons: isVid
+                          ? [
+                              DialogButton(
+                                child: Text('Play Video'),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => PlayVideo(
+                                                vidUrl: vidUrl,
+                                              )));
+                                  //Navigator.pop(context);
+                                },
+                              )
+                            ]
+                          : null,
+                      image: (image != 'none' && !isVid)
                           ? await loadImage(context, 'uploads/$image')
                           : null)
                   .show();
