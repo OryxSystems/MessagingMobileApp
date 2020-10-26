@@ -23,4 +23,21 @@ class GroupModel extends ChangeNotifier {
     _users.clear();
     notifyListeners();
   }
+
+  String getNameFromNumber(String number) {
+    for (UserModel user in _users) {
+      if (user.number == number) {
+        return user.name;
+      }
+    }
+    return number;
+  }
+
+  void makeAdmin(String number, bool admin) {
+    for (UserModel user in _users) {
+      if (user.number == number) {
+        user.setAdmin(admin);
+      }
+    }
+  }
 }

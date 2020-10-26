@@ -57,7 +57,7 @@ class Repository {
           .collection('users')
           .doc(number)
           .collection('groups')
-          .doc(groupName);
+          .doc(groupId);
 
       FirebaseFirestore.instance.runTransaction((transaction) async {
         transaction.set(
@@ -77,9 +77,25 @@ class Repository {
           .collection('users')
           .doc(number);
 
-      FirebaseFirestore.instance.runTransaction((transaction) async {
+      _firestore.runTransaction((transaction) async {
         transaction.set(documentReference,
             {'name': name, 'number': number, 'admin': admin});
+      });
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  updateAdmin(String groupId, String number, bool admin) {
+    try {
+      var documentReference = _firestore
+          .collection('groups')
+          .doc(groupId)
+          .collection('users')
+          .doc(number);
+
+      _firestore.runTransaction((transaction) async {
+        transaction.update(documentReference, {'admin': admin});
       });
     } catch (err) {
       print(err);

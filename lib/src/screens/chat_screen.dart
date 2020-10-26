@@ -1,3 +1,4 @@
+import 'package:CommunityHelp/src/models/group_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
@@ -31,10 +32,16 @@ class ChatScreenState extends State<ChatScreen> {
   final String groupName;
   final String messages = 'messages';
   Stream<List<Message>> _messageStream;
+  Stream<List<UserModel>> _usersInGroupStream;
 
   void initState() {
     super.initState();
     _messageStream = context.read<Repository>().getMessages(groupId);
+    _usersInGroupStream = context.read<Repository>().getUsersInGroup(groupId);
+    var user = Provider.of<UserModel>(context, listen: false);
+    addUsersToProvider();
+    userName = user.name;
+    userNumber = user.number;
     print('groupId in initStae: $groupId');
   }
 
@@ -47,82 +54,88 @@ class ChatScreenState extends State<ChatScreen> {
   ChatScreenState({this.groupId, this.groupName});
 
   Widget build(context) {
-    //print('id: $groupId; name: $groupName');
-    var user = context.watch<UserModel>();
-    userName = user.name;
-    userNumber = user.number;
-    print('nameOnchat: ${user.name}; number ${user.number}');
-    return Scaffold(
-      appBar: AppBar(
-        title: GestureDetector(
-          onTap: () {
-            print('content: /edit_group{$groupId: $groupName}');
-            Navigator.pushNamed(context, '/edit_group{$groupId: $groupName}');
-          },
-          child: Text('$groupName'),
-        ),
-        actions: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
+    return WillPopScope(
+        onWillPop: () {
+          // TODO - ask about?
+
+          var group = context.read<GroupModel>();
+          group.clear();
+          var user = Provider.of<UserModel>(context, listen: false);
+          user.setAdmin(false);
+          Navigator.of(context).pop(true);
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/report_incident{$groupId}');
-              },
-              child: Icon(Icons.report),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-              onTap: () {
+                print('content: /edit_group{$groupId: $groupName}');
                 Navigator.pushNamed(
                     context, '/edit_group{$groupId: $groupName}');
               },
-              child: Icon(Icons.edit),
+              child: Text('$groupName'),
             ),
-          )
-        ],
-      ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Flexible(
-                child: StreamBuilder<List<Message>>(
-                  stream: _messageStream,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    return ListView(
-                      reverse: true,
-                      children: snapshot.data.map(
-                        (Message message) {
-                          return buildMessage(
-                              context,
-                              message.user,
-                              message.content,
-                              message.date,
-                              message.image,
-                              message.incident);
-                        },
-                      ).toList(),
-                    );
+            actions: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/report_incident{$groupId}');
                   },
+                  child: Icon(Icons.report),
                 ),
               ),
-              buildInput()
+              Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(
+                        context, '/edit_group{$groupId: $groupName}');
+                  },
+                  child: Icon(Icons.edit),
+                ),
+              )
             ],
-          )
-        ],
-      ),
-    );
+          ),
+          body: Stack(
+            children: [
+              Column(
+                children: [
+                  Flexible(
+                    child: StreamBuilder<List<Message>>(
+                      stream: _messageStream,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        return ListView(
+                          reverse: true,
+                          children: snapshot.data.map(
+                            (Message message) {
+                              return buildMessage(
+                                  context,
+                                  message.user,
+                                  message.content,
+                                  message.date,
+                                  message.image,
+                                  message.incident);
+                            },
+                          ).toList(),
+                        );
+                      },
+                    ),
+                  ),
+                  buildInput()
+                ],
+              )
+            ],
+          ),
+        ));
   }
 
   // each individual message
-  Widget buildMessage(BuildContext context, String name, String content,
+  Widget buildMessage(BuildContext context, String number, String content,
       Timestamp date, String image, String incident) {
     //TODO - change the time for different timezones
     String newDate = '';
@@ -133,11 +146,14 @@ class ChatScreenState extends State<ChatScreen> {
       newDate = '${date.toDate().minute}';
     }
 
+    var group = Provider.of<GroupModel>(context, listen: false);
+    String name = group.getNameFromNumber(number);
+
     if ('$incident' == 'none') {
       return Container(
           padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           child: Column(
-            crossAxisAlignment: (name != userNumber)
+            crossAxisAlignment: (number != userNumber)
                 ? CrossAxisAlignment.start
                 : CrossAxisAlignment.end,
             children: [
@@ -151,7 +167,7 @@ class ChatScreenState extends State<ChatScreen> {
                   )),
               Container(
                   decoration: BoxDecoration(
-                      color: (name != userNumber)
+                      color: (number != userNumber)
                           ? Colors.blueGrey[800]
                           : Colors.blue[700],
                       borderRadius: BorderRadius.circular(8.0)),
@@ -342,9 +358,17 @@ class ChatScreenState extends State<ChatScreen> {
       if (pickedFile != null) {}
     });
   }
-/*
-  @override
-  void dispose() {
-    super.dispose();
-  }*/
+
+  addUsersToProvider() async {
+    var group = Provider.of<GroupModel>(context, listen: false);
+    await for (List<UserModel> users in _usersInGroupStream) {
+      for (UserModel user in users) {
+        if (user.number == userNumber) {
+          user.setName('You');
+          Provider.of<UserModel>(context, listen: false).setAdmin(user.isAdmin);
+        }
+        group.add(user);
+      }
+    }
+  }
 }
