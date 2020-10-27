@@ -44,12 +44,12 @@ class ChatScreenState extends State<ChatScreen> {
     userNumber = user.number;
     print('groupId in initStae: $groupId');
   }
-
+/*
   void dispose() {
     textEditingController?.dispose();
     listScrollController?.dispose();
     super.dispose();
-  }
+  }*/
 
   ChatScreenState({this.groupId, this.groupName});
 

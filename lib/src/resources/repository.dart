@@ -57,7 +57,7 @@ class Repository {
           .collection('users')
           .doc(number)
           .collection('groups')
-          .doc(groupId);
+          .doc(groupName);
 
       FirebaseFirestore.instance.runTransaction((transaction) async {
         transaction.set(

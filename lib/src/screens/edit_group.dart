@@ -30,11 +30,11 @@ class EditGroupState extends State<EditGroup> {
     super.initState();
     _userStream = context.read<Repository>().getUsersInGroup(groupId);
   }
-
+/*
   void dispose() {
     textEditingController?.dispose();
     super.dispose();
-  }
+  }*/
 
   Widget build(context) {
     var user = context.watch<UserModel>();
@@ -44,7 +44,7 @@ class EditGroupState extends State<EditGroup> {
       appBar: AppBar(
         title: Text('Edit: $groupName'),
       ),
-      floatingActionButton: changesMade
+      /*floatingActionButton: changesMade
           ? FloatingActionButton(
               child: Icon(Icons.done),
               onPressed: () {
@@ -58,7 +58,7 @@ class EditGroupState extends State<EditGroup> {
                 Navigator.of(context).popUntil((_) => count++ >= 2);
                 //print('Submit changes');
               })
-          : null,
+          : null,*/
       body: Stack(
         children: [
           Column(
@@ -118,7 +118,29 @@ class EditGroupState extends State<EditGroup> {
                 trailing: adminStatus ? Text('Admin') : null,
               ),
               // ListView of the users in the group accessed by the provider
+              /*Flexible(
+                  child: ListView(
+                children: buildUsers(context),
+              ))*/
               Flexible(
+                child: StreamBuilder<List<UserModel>>(
+                  stream: _userStream,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Text('Loading...');
+                    }
+                    return ListView(
+                      children: snapshot.data.map(
+                        (UserModel user) {
+                          return buildUser(
+                              context, user.name, user.number, user.isAdmin);
+                        },
+                      ).toList(),
+                    );
+                  },
+                ),
+              )
+              /*Flexible(
                 child: StreamBuilder<List<UserModel>>(
                   stream: _userStream,
                   builder: (context, snapshot) {
@@ -128,7 +150,7 @@ class EditGroupState extends State<EditGroup> {
                     return ListView(children: buildUsers(context));
                   },
                 ),
-              ),
+              ),*/
             ],
           )
         ],
@@ -142,13 +164,13 @@ class EditGroupState extends State<EditGroup> {
     //GroupModel group = context.watch<GroupModel>();
     for (UserModel user in group.users) {
       print('${user.name}');
-      userList.add(buildUser(context, user.name, user.number, user.isAdmin));
+      userList.add(buildUser2(context, user.name, user.number, user.isAdmin));
     }
     return userList;
   }
 
 // returns the users in the group
-  Widget buildUser(
+  Widget buildUser2(
       BuildContext context, String name, String number, bool isAdmin) {
     return (userNumber != number)
         ? ListTile(
@@ -232,6 +254,40 @@ class EditGroupState extends State<EditGroup> {
                           ),
                         ]).show()
                   : print('Not an admin');
+            },
+          )
+        : Container();
+  }
+
+  // returns the users in the group
+  Widget buildUser(
+      BuildContext context, String name, String number, bool isAdmin) {
+    return (userNumber != number)
+        ? ListTile(
+            //TODO - change to use number as name might not be unique
+            title: Text('$name'),
+            trailing: isAdmin ? Text('Admin') : null,
+            onTap: () {
+              Alert(context: context, title: name, buttons: [
+                DialogButton(
+                  child: isAdmin ? Text('Remove admin') : Text('Make admin'),
+                  onPressed: () {
+                    isAdmin
+                        ? Provider.of<Repository>(context, listen: false)
+                            .updateAdmin(groupId, number,
+                                false) //group.makeAdmin(number, false)
+                        : Provider.of<Repository>(context, listen: false)
+                            .updateAdmin(groupId, number,
+                                true); //group.makeAdmin(number, true);
+                  },
+                ),
+                DialogButton(
+                  child: Text('remove user'),
+                  onPressed: () {
+                    print('remove user: $name from group');
+                  },
+                ),
+              ]).show();
             },
           )
         : Container();
