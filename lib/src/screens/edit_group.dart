@@ -36,35 +36,8 @@ class EditGroupState extends State<EditGroup> {
     userNumber = user.number;*/
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit group'),
+        title: Text('Edit: $groupName'),
       ),
-      /*floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.group_add),
-        onPressed: () {
-          Alert(
-              context: context,
-              title: 'Add a user',
-              content: Container(
-                  child: TextField(
-                      controller: textEditingController,
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.account_box),
-                        labelText: 'Number',
-                      ))),
-              buttons: [
-                DialogButton(
-                  child: Text('Add'),
-                  onPressed: () {
-                    print('add: ${textEditingController.text}');
-                    addUser(context, textEditingController.text);
-                    textEditingController.clear();
-                  },
-                )
-              ]).show();
-          textEditingController.clear();
-        },
-      ),*/
-
       body: Stack(
         children: [
           Column(
@@ -124,17 +97,22 @@ class EditGroupState extends State<EditGroup> {
   Widget buildUser(
       BuildContext context, String name, String number, bool isAdmin) {
     return ListTile(
-      //TODO - change to use number as name might not be unique
       title: (userNumber == number) ? Text('You') : Text('$name'),
       trailing: isAdmin ? Text('Admin') : null,
       onTap: () {
-        print('this is the group name: $groupName');
-        print('number: $number');
         Alert(context: context, title: name, buttons: [
           DialogButton(
-            child: Text('make admin'),
+            child: isAdmin ? Text('remove admin') : Text('make admin'),
             onPressed: () {
-              print('make user: $name an admin');
+              isAdmin
+                  ? context
+                      .read<Repository>()
+                      .updateAdmin(groupId, number, false)
+                  : context
+                      .read<Repository>()
+                      .updateAdmin(groupId, number, true);
+
+              Navigator.pop(context);
             },
           ),
           DialogButton(

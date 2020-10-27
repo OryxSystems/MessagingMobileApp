@@ -53,13 +53,13 @@ class Repository {
   // adds the group to the users collection
   addGroup(String number, String groupId, String groupName) {
     try {
-      var documentReference = FirebaseFirestore.instance
+      var documentReference = _firestore
           .collection('users')
           .doc(number)
           .collection('groups')
           .doc(groupName);
 
-      FirebaseFirestore.instance.runTransaction((transaction) async {
+      _firestore.runTransaction((transaction) async {
         transaction.set(
             documentReference, {'groupId': groupId, 'groupName': groupName});
       });
@@ -71,15 +71,31 @@ class Repository {
   // adds the users to the group/groupid/users collection
   addUsers(String groupId, String number, String name, bool admin) {
     try {
-      var documentReference = FirebaseFirestore.instance
+      var documentReference = _firestore
           .collection('groups')
           .doc(groupId)
           .collection('users')
           .doc(number);
 
-      FirebaseFirestore.instance.runTransaction((transaction) async {
+      _firestore.runTransaction((transaction) async {
         transaction.set(documentReference,
             {'name': name, 'number': number, 'admin': admin});
+      });
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  updateAdmin(String groupId, String number, bool admin) {
+    try {
+      var documentReference = _firestore
+          .collection('groups')
+          .doc(groupId)
+          .collection('users')
+          .doc(number);
+
+      _firestore.runTransaction((transaction) async {
+        transaction.update(documentReference, {'admin': admin});
       });
     } catch (err) {
       print(err);
