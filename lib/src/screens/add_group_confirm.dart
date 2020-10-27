@@ -71,12 +71,12 @@ class ConfirmGroupState extends State<ConfirmGroup> {
     }
     //TODO - use repository more
     for (UserModel user in group.users) {
-      addUsers(groupId, user.number, user.name);
+      addUsers(groupId, user.number, user.name, false);
     }
-    var user = context.read<UserModel>();
+    var selectedUser = context.read<UserModel>();
     // Adds the logged in user
-    addUsers(groupId, user.number, user.name);
-    addGroup(user.number, groupId, groupName);
+    addUsers(groupId, selectedUser.number, selectedUser.name, true);
+    addGroup(selectedUser.number, groupId, groupName);
 
     for (UserModel user in group.users) {
       addGroup(user.number, groupId, groupName);
@@ -110,13 +110,7 @@ class ConfirmGroupState extends State<ConfirmGroup> {
   }
 
   // adds the users to the group/groupid/users collection
-  addUsers(String groupId, String number, String name) {
-    var admin = false;
-    var user = context.read<UserModel>();
-    if (user.number == number) {
-      admin = true;
-    }
-
+  addUsers(String groupId, String number, String name, bool admin) {
     try {
       var documentReference = FirebaseFirestore.instance
           .collection('groups')
