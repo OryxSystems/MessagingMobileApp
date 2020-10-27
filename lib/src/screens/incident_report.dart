@@ -9,7 +9,7 @@ import 'package:uuid/uuid.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:video_player/video_player.dart';
 
-import '../widgets/upload_image.dart';
+import '../resources/upload_media.dart';
 import '../models/user_model.dart';
 import '../screens/play_video.dart';
 

@@ -39,7 +39,7 @@ class ChatScreenState extends State<ChatScreen> {
     _messageStream = context.read<Repository>().getMessages(groupId);
     _usersInGroupStream = context.read<Repository>().getUsersInGroup(groupId);
     var user = Provider.of<UserModel>(context, listen: false);
-    addUsersToProvider();
+    addUsersToProvider(context);
     userName = user.name;
     userNumber = user.number;
     print('groupId in initStae: $groupId');
@@ -359,7 +359,7 @@ class ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  addUsersToProvider() async {
+  addUsersToProvider(BuildContext context) async {
     var group = Provider.of<GroupModel>(context, listen: false);
     await for (List<UserModel> users in _usersInGroupStream) {
       for (UserModel user in users) {

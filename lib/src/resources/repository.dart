@@ -86,7 +86,7 @@ class Repository {
     }
   }
 
-  updateAdmin(String groupId, String number, bool admin) {
+  void updateAdmin(String groupId, String number, bool admin) {
     try {
       var documentReference = _firestore
           .collection('groups')

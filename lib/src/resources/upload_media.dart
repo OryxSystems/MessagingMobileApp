@@ -2,7 +2,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
 
-uploadImageToFirebase(
+void uploadImageToFirebase(
     BuildContext context, File imageFile, String fileName) async {
   StorageReference firebaseStorageRef =
       FirebaseStorage.instance.ref().child('uploads/$fileName');
@@ -11,7 +11,7 @@ uploadImageToFirebase(
   taskSnapshot.ref.getDownloadURL().then((value) => print('Done: $value'));
 }
 
-uploadVideoToFirebase(
+void uploadVideoToFirebase(
     BuildContext context, File imageFile, String fileName) async {
   StorageReference ref =
       FirebaseStorage.instance.ref().child('videos/$fileName');

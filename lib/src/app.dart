@@ -1,6 +1,3 @@
-import 'package:CommunityHelp/src/models/user_model.dart';
-import 'package:CommunityHelp/src/resources/repository.dart';
-import 'package:CommunityHelp/src/screens/add_group.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +8,11 @@ import 'screens/chat_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/add_group_confirm.dart';
 import 'screens/incident_report.dart';
+import 'screens/add_group.dart';
+
 import 'models/group_model.dart';
+import 'models/user_model.dart';
+import 'resources/repository.dart';
 
 class App extends StatelessWidget {
   Widget build(context) {
