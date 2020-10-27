@@ -19,6 +19,7 @@ class EditGroupState extends State<EditGroup> {
   final String groupId;
   final String groupName;
   String userNumber;
+  //bool adminStatus;
   Stream<List<UserModel>> _userStream;
   EditGroupState({this.groupId, this.groupName});
   final TextEditingController textEditingController = TextEditingController();
@@ -26,16 +27,18 @@ class EditGroupState extends State<EditGroup> {
   void initState() {
     super.initState();
     _userStream = context.read<Repository>().getUsersInGroup(groupId);
+    //adminStatus = context.read<UserModel>().isAdmin;
+    userNumber = context.read<UserModel>().number;
   }
 
   Widget build(context) {
-    var user = context.watch<UserModel>();
-    userNumber = user.number;
+    /*var user = context.watch<UserModel>();
+    userNumber = user.number;*/
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit group'),
       ),
-      floatingActionButton: FloatingActionButton(
+      /*floatingActionButton: FloatingActionButton(
         child: Icon(Icons.group_add),
         onPressed: () {
           Alert(
@@ -60,11 +63,38 @@ class EditGroupState extends State<EditGroup> {
               ]).show();
           textEditingController.clear();
         },
-      ),
+      ),*/
+
       body: Stack(
         children: [
           Column(
             children: <Widget>[
+              ListTile(
+                title: Center(child: Text('Add User')),
+                onTap: () {
+                  Alert(
+                      context: context,
+                      title: 'Add a user',
+                      content: Container(
+                          child: TextField(
+                              controller: textEditingController,
+                              decoration: InputDecoration(
+                                icon: Icon(Icons.account_box),
+                                labelText: 'Number',
+                              ))),
+                      buttons: [
+                        DialogButton(
+                          child: Text('Add'),
+                          onPressed: () {
+                            print('add: ${textEditingController.text}');
+                            addUser(context, textEditingController.text);
+                            textEditingController.clear();
+                          },
+                        )
+                      ]).show();
+                  textEditingController.clear();
+                },
+              ),
               Flexible(
                 child: StreamBuilder<List<UserModel>>(
                   stream: _userStream,
