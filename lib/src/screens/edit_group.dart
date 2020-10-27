@@ -19,7 +19,7 @@ class EditGroupState extends State<EditGroup> {
   final String groupId;
   final String groupName;
   String userNumber;
-  //bool adminStatus;
+  bool adminStatus;
   Stream<List<UserModel>> _userStream;
   EditGroupState({this.groupId, this.groupName});
   final TextEditingController textEditingController = TextEditingController();
@@ -27,13 +27,16 @@ class EditGroupState extends State<EditGroup> {
   void initState() {
     super.initState();
     _userStream = context.read<Repository>().getUsersInGroup(groupId);
-    //adminStatus = context.read<UserModel>().isAdmin;
     userNumber = context.read<UserModel>().number;
+    initAdmin();
+  }
+
+  initAdmin() async {
+    adminStatus =
+        await context.read<Repository>().isNumberAdmin(groupId, userNumber);
   }
 
   Widget build(context) {
-    /*var user = context.watch<UserModel>();
-    userNumber = user.number;*/
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit: $groupName'),
@@ -73,7 +76,7 @@ class EditGroupState extends State<EditGroup> {
                   stream: _userStream,
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
-                      return Text('Loading...');
+                      return CircularProgressIndicator();
                     }
                     return ListView(
                       children: snapshot.data.map(
@@ -100,28 +103,34 @@ class EditGroupState extends State<EditGroup> {
       title: (userNumber == number) ? Text('You') : Text('$name'),
       trailing: isAdmin ? Text('Admin') : null,
       onTap: () {
-        Alert(context: context, title: name, buttons: [
-          DialogButton(
-            child: isAdmin ? Text('remove admin') : Text('make admin'),
-            onPressed: () {
-              isAdmin
-                  ? context
-                      .read<Repository>()
-                      .updateAdmin(groupId, number, false)
-                  : context
-                      .read<Repository>()
-                      .updateAdmin(groupId, number, true);
+        adminStatus
+            ? Alert(context: context, title: name, buttons: [
+                DialogButton(
+                  child: isAdmin ? Text('remove admin') : Text('make admin'),
+                  onPressed: () {
+                    isAdmin
+                        ? context
+                            .read<Repository>()
+                            .updateAdmin(groupId, number, false)
+                        : context
+                            .read<Repository>()
+                            .updateAdmin(groupId, number, true);
 
-              Navigator.pop(context);
-            },
-          ),
-          DialogButton(
-            child: Text('remove user'),
-            onPressed: () {
-              print('remove user: $name from group');
-            },
-          ),
-        ]).show();
+                    Navigator.pop(context);
+                  },
+                ),
+                DialogButton(
+                  child: Text('remove user'),
+                  onPressed: () async {
+                    var ad = await context
+                        .read<Repository>()
+                        .isNumberAdmin(groupId, number);
+                    print('remove user: $name from group');
+                    print('admin?@@*&^ $adminStatus');
+                  },
+                ),
+              ]).show()
+            : print('not an admin');
       },
     );
   }

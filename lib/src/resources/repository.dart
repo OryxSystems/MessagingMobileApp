@@ -101,4 +101,23 @@ class Repository {
       print(err);
     }
   }
+
+  Future<bool> isNumberAdmin(String groupId, String number) async {
+    bool b = false;
+    await _firestore
+        .collection('groups')
+        .doc(groupId)
+        .collection('users')
+        .doc(number)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        print('document data: ${documentSnapshot.data()['admin']}');
+        b = documentSnapshot.data()['admin'];
+      }
+    });
+
+    return b;
+    //return b;
+  }
 }
