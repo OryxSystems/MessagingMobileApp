@@ -31,6 +31,7 @@ class Repository {
         .collection('groups')
         .doc(groupId)
         .collection('users')
+        .orderBy('name')
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
@@ -42,7 +43,11 @@ class Repository {
 
   // used to fetch all users
   Stream<List<UserModel>> getUsers() {
-    return _firestore.collection('users').snapshots().map((snapshot) {
+    return _firestore
+        .collection('users')
+        .orderBy('name')
+        .snapshots()
+        .map((snapshot) {
       return snapshot.docs
           .map((document) =>
               UserModel(document['name'], document['number'], false))
