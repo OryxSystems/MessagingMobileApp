@@ -26,7 +26,10 @@ class AddGroupState extends State<AddGroup> {
           title: Text('Select users'),
         ),
         body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('users').snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .orderBy('name')
+              .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Text('Loading...');
