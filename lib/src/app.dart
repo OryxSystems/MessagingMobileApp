@@ -1,6 +1,7 @@
 import 'package:CommunityHelp/src/models/user_model.dart';
 import 'package:CommunityHelp/src/resources/repository.dart';
 import 'package:CommunityHelp/src/screens/add_group.dart';
+import 'package:CommunityHelp/src/screens/display_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';

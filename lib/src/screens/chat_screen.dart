@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+
 import '../resources/load_image.dart';
 import '../resources/load_video.dart';
 import '../screens/play_video.dart';
@@ -10,6 +11,7 @@ import '../screens/play_video.dart';
 import 'package:CommunityHelp/src/models/message_model.dart';
 import 'package:CommunityHelp/src/resources/repository.dart';
 import '../models/user_model.dart';
+import 'display_image.dart';
 
 class ChatScreen extends StatefulWidget {
   //final String user;
@@ -197,6 +199,7 @@ class ChatScreenState extends State<ChatScreen> {
                 isVid = true;
                 vidUrl = await loadVideo(context, 'videos/$image');
               }
+              Image i;
               Alert(
                       context: context,
                       title: 'Icident: $incident',
@@ -218,7 +221,37 @@ class ChatScreenState extends State<ChatScreen> {
                             ]
                           : null,
                       image: (image != 'none' && !isVid)
-                          ? await loadImage(context, 'uploads/$image')
+                          ? GestureDetector(
+                              onTap: () {
+                                if (i != null) {
+                                  print('image tapped $i');
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DisplayImage(
+                                          image: i,
+                                        ),
+                                      ));
+                                } else {
+                                  print('why is it null');
+                                }
+                              },
+                              child: FutureBuilder<Widget>(
+                                future: loadImage(context, 'uploads/$image'),
+                                builder: (context, snapshot) {
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.waiting:
+                                      return CircularProgressIndicator();
+                                    default:
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      } else {
+                                        i = snapshot.data;
+                                        return snapshot.data;
+                                      }
+                                  }
+                                },
+                              ))
                           : null)
                   .show();
             } catch (err) {
