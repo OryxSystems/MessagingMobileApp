@@ -65,10 +65,37 @@ class EditGroupState extends State<EditGroup> {
                             print('add: ${textEditingController.text}');
                             addUser(context, textEditingController.text);
                             textEditingController.clear();
+                            Navigator.pop(context);
                           },
                         )
                       ]).show();
                   textEditingController.clear();
+                },
+              ),
+              ListTile(
+                title: Center(
+                    child: Text(
+                  'Exit chat',
+                  style: TextStyle(color: Colors.red),
+                )),
+                onTap: () {
+                  Alert(context: context, title: 'Are you sure?', buttons: [
+                    DialogButton(
+                        child: Text('Yes'),
+                        onPressed: () {
+                          context
+                              .read<Repository>()
+                              .exitGroup(groupId, userNumber, groupName);
+                          int count = 0;
+                          Navigator.of(context).popUntil((_) => count++ >= 3);
+                        }),
+                    DialogButton(
+                        child: Text('No'),
+                        onPressed: () {
+                          print('dont exit group');
+                          Navigator.pop(context);
+                        })
+                  ]).show();
                 },
               ),
               Flexible(
@@ -122,11 +149,15 @@ class EditGroupState extends State<EditGroup> {
                 DialogButton(
                   child: Text('remove user'),
                   onPressed: () async {
-                    var ad = await context
+                    context
+                        .read<Repository>()
+                        .exitGroup(groupId, number, groupName);
+                    Navigator.pop(context);
+                    /*var ad = await context
                         .read<Repository>()
                         .isNumberAdmin(groupId, number);
                     print('remove user: $name from group');
-                    print('admin?@@*&^ $adminStatus');
+                    print('admin?@@*&^ $adminStatus');*/
                   },
                 ),
               ]).show()
@@ -145,22 +176,27 @@ class EditGroupState extends State<EditGroup> {
         Provider.of<Repository>(context, listen: false).getUsers();
 
     await for (List<UserModel> users in stream) {
-      for (UserModel user in users) {
-        print('for $number >> user $count: ${user.number}');
-        if (user.number == number) {
-          isNumber = true;
-          newUser = user;
-          break;
+      if (adminStatus) {
+        for (UserModel user in users) {
+          print('for $number >> user $count: ${user.number}');
+          if (user.number == number) {
+            isNumber = true;
+            newUser = user;
+            break;
+          }
         }
-      }
-      if (isNumber) {
-        // adds the user to the group
-        Provider.of<Repository>(context, listen: false)
-            .addUsers(groupId, newUser.number, newUser.name, false);
+        if (isNumber) {
+          // adds the user to the group
+          Provider.of<Repository>(context, listen: false)
+              .addUsers(groupId, newUser.number, newUser.name, false);
 
-        // adds the group to the user's list of groups
-        Provider.of<Repository>(context, listen: false)
-            .addGroup(newUser.number, groupId, groupName);
+          // adds the group to the user's list of groups
+          Provider.of<Repository>(context, listen: false)
+              .addGroup(newUser.number, groupId, groupName);
+        }
+      } else {
+        print('not an admin');
+        // TODO - what happens if not an admin
       }
     }
   }
