@@ -198,8 +198,8 @@ class NewReportState extends State<NewReport> {
   }
 
   void dispose() {
-    textEditingController.dispose();
-    videoPlayerController.dispose();
+    textEditingController?.dispose();
+    videoPlayerController?.dispose();
     super.dispose();
   }
 
@@ -277,14 +277,14 @@ class NewReportState extends State<NewReport> {
     });
   }
 
-  onSubmit(BuildContext context, String incident, String description) {
+  onSubmit(BuildContext context, String incident, String description) async {
     print('Incident: $incident; Description: $description');
 
     if (imageFile != null) {
-      uploadImageToFirebase(context, imageFile, fileName);
+      await uploadImageToFirebase(context, imageFile, fileName);
     } else {
       if (videoFile != null) {
-        uploadVideoToFirebase(context, videoFile, fileName);
+        await uploadVideoToFirebase(context, videoFile, fileName);
       } else {
         fileName = 'none';
       }

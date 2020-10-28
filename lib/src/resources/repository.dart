@@ -116,8 +116,44 @@ class Repository {
         b = documentSnapshot.data()['admin'];
       }
     });
-
     return b;
-    //return b;
+  }
+
+  exitGroup(String groupId, String number, String groupName) {
+    deleteGroupFromUser(number, groupName);
+    deleteUserFromGroup(groupId, number);
+  }
+
+  deleteGroupFromUser(String number, String groupName) {
+    try {
+      var documentReference = _firestore
+          .collection('users')
+          .doc(number)
+          .collection('groups')
+          .doc(groupName);
+
+      _firestore.runTransaction((transaction) async {
+        transaction.delete(documentReference);
+      });
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  deleteUserFromGroup(String groupId, String number) {
+    // TODO - if last user then delete group
+    try {
+      var documentReference = _firestore
+          .collection('groups')
+          .doc(groupId)
+          .collection('users')
+          .doc(number);
+
+      _firestore.runTransaction((transaction) async {
+        transaction.delete(documentReference);
+      });
+    } catch (err) {
+      print(err);
+    }
   }
 }
