@@ -13,6 +13,7 @@ import 'package:video_player/video_player.dart';
 import '../widgets/upload_image.dart';
 import '../models/user_model.dart';
 import '../screens/play_video.dart';
+import '../screens/display_image.dart';
 
 class NewReport extends StatefulWidget {
   final String groupId;
@@ -102,7 +103,18 @@ class NewReportState extends State<NewReport> {
                     height: MediaQuery.of(context).size.height * 0.5,
                     width: MediaQuery.of(context).size.width * 0.6,
                     child: (imageFile != null && !fileName.endsWith('.mp4'))
-                        ? Image.file(imageFile)
+                        ? GestureDetector(
+                            onTap: () {
+                              print('tapped');
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DisplayImage(
+                                      image: Image.file(imageFile),
+                                    ),
+                                  ));
+                            },
+                            child: Image.file(imageFile))
                         : (videoFile != null)
                             ? RaisedButton(
                                 child: Text('Play Video'),
@@ -238,55 +250,73 @@ class NewReportState extends State<NewReport> {
   }
 
   Future getCameraImage(BuildContext context) async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    try {
+      final pickedFile = await picker.getImage(source: ImageSource.camera);
 
-    setState(() {
-      if (pickedFile != null) {
-        imageFile = File(pickedFile.path);
-        Uuid unique = Uuid();
-        fileName = unique.v4() + basename(imageFile.path);
-        videoFile = null;
-      }
-    });
+      setState(() {
+        if (pickedFile != null) {
+          imageFile = File(pickedFile.path);
+          Uuid unique = Uuid();
+          fileName = unique.v4() + basename(imageFile.path);
+          videoFile = null;
+        }
+      });
+    } catch (err) {
+      print(err);
+    }
   }
 
   Future getGalleryImage(BuildContext context) async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    try {
+      final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
-    setState(() {
-      if (pickedFile != null) {
-        imageFile = File(pickedFile.path);
-        Uuid unique = Uuid();
-        fileName = unique.v4() + basename(imageFile.path);
-        videoFile = null;
-      }
-    });
+      setState(() {
+        if (pickedFile != null) {
+          imageFile = File(pickedFile.path);
+          Uuid unique = Uuid();
+          fileName = unique.v4() + basename(imageFile.path);
+          videoFile = null;
+        }
+      });
+      // one error will be if the user doesn't allow permissions
+    } catch (err) {
+      print(err);
+    }
   }
 
   Future getCameraVideo(BuildContext context) async {
-    final pickedFile = await picker.getVideo(source: ImageSource.camera);
+    try {
+      final pickedFile = await picker.getVideo(source: ImageSource.camera);
 
-    setState(() {
-      if (pickedFile != null) {
-        videoFile = File(pickedFile.path);
-        Uuid unique = Uuid();
-        fileName = unique.v4() + basename(videoFile.path);
-        imageFile = null;
-      }
-    });
+      setState(() {
+        if (pickedFile != null) {
+          videoFile = File(pickedFile.path);
+          Uuid unique = Uuid();
+          fileName = unique.v4() + basename(videoFile.path);
+          imageFile = null;
+        }
+      });
+    } catch (err) {
+      print(err);
+    }
   }
 
   Future getGalleryVideo(BuildContext context) async {
-    final pickedFile = await picker.getVideo(source: ImageSource.gallery);
+    try {
+      final pickedFile = await picker.getVideo(source: ImageSource.gallery);
 
-    setState(() {
-      if (pickedFile != null) {
-        videoFile = File(pickedFile.path);
-        Uuid unique = Uuid();
-        fileName = unique.v4() + basename(videoFile.path) + '.mp4';
-        imageFile = null;
-      }
-    });
+      setState(() {
+        if (pickedFile != null) {
+          videoFile = File(pickedFile.path);
+          Uuid unique = Uuid();
+          fileName = unique.v4() + basename(videoFile.path) + '.mp4';
+          imageFile = null;
+        }
+      });
+      // one error will be if the user doesn't allow permissions
+    } catch (err) {
+      print(err);
+    }
   }
 
   onSubmit(BuildContext context, String incident, String description) async {
