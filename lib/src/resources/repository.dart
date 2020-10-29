@@ -61,7 +61,7 @@ class Repository {
           .collection('users')
           .doc(number)
           .collection('groups')
-          .doc(groupName);
+          .doc(groupId);
 
       _firestore.runTransaction((transaction) async {
         transaction.set(
@@ -122,18 +122,18 @@ class Repository {
     return b;
   }
 
-  exitGroup(String groupId, String number, String groupName) {
-    deleteGroupFromUser(number, groupName);
+  exitGroup(String groupId, String number) {
+    deleteGroupFromUser(number, groupId);
     deleteUserFromGroup(groupId, number);
   }
 
-  deleteGroupFromUser(String number, String groupName) {
+  deleteGroupFromUser(String number, String groupId) {
     try {
       var documentReference = _firestore
           .collection('users')
           .doc(number)
           .collection('groups')
-          .doc(groupName);
+          .doc(groupId);
 
       _firestore.runTransaction((transaction) async {
         transaction.delete(documentReference);
