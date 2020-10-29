@@ -10,7 +10,6 @@ class Repository {
 
   // used to fetch messages from 'groupId'
   Stream<List<Message>> getMessages(String groupId) {
-    print('groupId in repository: $groupId');
     return _firestore
         .collection('groups')
         .doc(groupId)
@@ -117,7 +116,6 @@ class Repository {
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-        print('document data: ${documentSnapshot.data()['admin']}');
         b = documentSnapshot.data()['admin'];
       }
     });
@@ -160,5 +158,26 @@ class Repository {
     } catch (err) {
       print(err);
     }
+  }
+
+  Future<String> getNameFromNumber(String number) async {
+    String name = '';
+    try {
+      await _firestore
+          .collection('users')
+          .doc(number)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          name = documentSnapshot.data()['name'];
+          print('name in rep: $name');
+          //b = documentSnapshot.data()['admin'];
+        }
+      });
+    } catch (err) {
+      print(err);
+    }
+
+    return name;
   }
 }
