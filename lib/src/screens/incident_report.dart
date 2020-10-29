@@ -346,10 +346,10 @@ class NewReportState extends State<NewReport> {
           _isLoading = false;
         });
         snapshot.ref.getDownloadURL().then((value) => print('Done: $value'));
+        onSendMessage(description, incident);
         Navigator.pop(context);
       });
     }
-    onSendMessage(description, incident);
   }
 
   // Sends the input data(content) to the firebase firestore
