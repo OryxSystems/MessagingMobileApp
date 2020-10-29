@@ -55,40 +55,44 @@ class ConfirmGroupState extends State<ConfirmGroup> {
 
   // adds the input data to the firebase firestore
   onAddGroup(String groupName, BuildContext context) {
-    String groupId = Uuid().v4();
-    GroupModel group = context.read<GroupModel>();
+    if (groupName.length > 0) {
+      String groupId = Uuid().v4();
+      GroupModel group = context.read<GroupModel>();
 
-    try {
-      //adds the groupName to the groups/groupid collection
-      var documentReference =
-          FirebaseFirestore.instance.collection('groups').doc(groupId);
+      try {
+        //adds the groupName to the groups/groupid collection
+        var documentReference =
+            FirebaseFirestore.instance.collection('groups').doc(groupId);
 
-      FirebaseFirestore.instance.runTransaction((transaction) async {
-        transaction.set(documentReference, {'groupName': groupName});
-      });
-    } catch (err) {
-      print(err);
-    }
-    //TODO - use repository more
-    for (UserModel user in group.users) {
-      addUsers(groupId, user.number, user.name, false);
-    }
-    var selectedUser = context.read<UserModel>();
-    // Adds the logged in user
-    addUsers(groupId, selectedUser.number, selectedUser.name, true);
-    addGroup(selectedUser.number, groupId, groupName);
+        FirebaseFirestore.instance.runTransaction((transaction) async {
+          transaction.set(documentReference, {'groupName': groupName});
+        });
+      } catch (err) {
+        print(err);
+      }
+      //TODO - use repository more
+      for (UserModel user in group.users) {
+        addUsers(groupId, user.number, user.name, false);
+      }
+      var selectedUser = context.read<UserModel>();
+      // Adds the logged in user
+      addUsers(groupId, selectedUser.number, selectedUser.name, true);
+      addGroup(selectedUser.number, groupId, groupName);
 
-    for (UserModel user in group.users) {
-      addGroup(user.number, groupId, groupName);
-    }
+      for (UserModel user in group.users) {
+        addGroup(user.number, groupId, groupName);
+      }
 
-    group.clear();
-    // goes back two screens
-    //TODO - might need to change to use Navigate.withname
-    int count = 0;
-    Navigator.of(context).popUntil((_) => count++ >= 2);
-    /*Navigator.popUntil(
+      group.clear();
+      // goes back two screens
+      //TODO - might need to change to use Navigate.withname
+      int count = 0;
+      Navigator.of(context).popUntil((_) => count++ >= 2);
+      /*Navigator.popUntil(
         context, ModalRoute.withName('/h{${user.name}: ${user.number}}'));*/
+    } else {
+      print('Need text');
+    }
   }
 
   // adds the group to the users collection
@@ -98,7 +102,7 @@ class ConfirmGroupState extends State<ConfirmGroup> {
           .collection('users')
           .doc(number)
           .collection('groups')
-          .doc(groupName);
+          .doc(groupId);
 
       FirebaseFirestore.instance.runTransaction((transaction) async {
         transaction.set(

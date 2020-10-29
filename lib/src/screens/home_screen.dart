@@ -45,7 +45,7 @@ class HomeScreenState extends State<HomeScreen> {
             ),*/
             TextField(
               controller: usernumberController,
-              decoration: InputDecoration(labelText: 'User number'),
+              decoration: InputDecoration(labelText: 'Enter number'),
             )
           ]),
           buttons: [

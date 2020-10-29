@@ -85,7 +85,7 @@ class EditGroupState extends State<EditGroup> {
                         onPressed: () {
                           context
                               .read<Repository>()
-                              .exitGroup(groupId, userNumber, groupName);
+                              .exitGroup(groupId, userNumber);
                           int count = 0;
                           Navigator.of(context).popUntil((_) => count++ >= 3);
                         }),
@@ -149,9 +149,7 @@ class EditGroupState extends State<EditGroup> {
                 DialogButton(
                   child: Text('remove user'),
                   onPressed: () async {
-                    context
-                        .read<Repository>()
-                        .exitGroup(groupId, number, groupName);
+                    context.read<Repository>().exitGroup(groupId, number);
                     Navigator.pop(context);
                     /*var ad = await context
                         .read<Repository>()
